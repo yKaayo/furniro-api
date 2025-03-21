@@ -1,26 +1,22 @@
 from fastapi.responses import FileResponse
 import os
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
-products = [
-    {
-        "name": "Chair",
-        "img": "chair.webp",
-        "price": 99,
-        "description": "Stylish chair"
-    },
-    
-    {
-        "name": "Counch",
-        "img": "counch.webp",
-        "price": 999,
-        "description": "Stylish counch"
-    },
-]
+products = []
 
-products = [{"id": i+1, **productItem} for i, productItem in enumerate(products)]
+class Product(BaseModel):
+    name: str
+    img: str
+    price: float
+    description: str
+
+products.append(Product(name="Chair", img="chair.webp", price=99.0, description="Stylish chair"))
+products.append(Product(name="Counch", img="counch.webp", price=999.0, description="Stylish counch"))
+
+products = [{"id": i + 1, **product.dict()} for i, product in enumerate(products)]
 
 # Routes
 @app.get("/product/{id}")
